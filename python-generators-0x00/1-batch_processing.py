@@ -62,13 +62,13 @@ def stream_users_in_batches(batch_size: int) -> Generator[List[Tuple[str, str, s
 # 3. Batch processing – filter users over age 25
 # ------------------------------------------------------------------
 
-def batch_processing(batch_size: int):
-    """Process each batch, printing users whose age > 25.
+def batch_processing(batch_size: int) -> List[Tuple[str, str, str, int]]:
+    """Process each batch, returning users whose age > 25.
 
-    Utilises at most 2 additional loops: one over batches, one list
-    comprehension (implicit) to filter. Total loops in this file ≤ 3.
+    Returns a list of matching rows.
     """
+    result = []
     for batch in stream_users_in_batches(batch_size):  # 2nd loop
         over_25 = [row for row in batch if int(row[3]) > 25]  # list comp (not counted as explicit loop)
-        for row in over_25:  # 3rd loop (final)
-            print(row)
+        result.extend(over_25)  # 3rd loop handled internally
+    return result
