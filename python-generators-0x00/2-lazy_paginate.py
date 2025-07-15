@@ -78,9 +78,8 @@ def paginate_users(page_size: int, offset: int) -> List[Tuple[str, str, str, int
     with _get_connection() as conn:
         cursor = conn.cursor(dictionary=False)
         cursor.execute(
-            "SELECT user_id, name, email, age FROM user_data LIMIT %s OFFSET %s",
-            (page_size, offset)
-        )
+    "SELECT * FROM user_data LIMIT %s OFFSET %s",
+    (page_size, offset) )
         results = cursor.fetchall()
         cursor.close()
         return results
