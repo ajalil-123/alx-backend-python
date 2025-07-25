@@ -31,9 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "rest_framework.permissions.IsAuthenticated", 
-    "DEFAULT_AUTHENTICATION_CLASSES", 
-    "rest_framework.authentication.SessionAuthentication",
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,15 +54,15 @@ MIDDLEWARE = [
 
 
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.TokenAuthentication',
-#     ]
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 
 ROOT_URLCONF = 'messaging_app.urls'
