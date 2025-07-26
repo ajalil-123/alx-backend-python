@@ -22,6 +22,4 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
     
-    @property
-    def password_hash(self):
-        return self.password 
+    
