@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('chats.urls')),
 
+
+urlpatterns = [
+    path('api/', include('chats.urls')),
+    path('api-auth/', include('rest_framework.urls')),  # Add this line for browsable API login/logout
 ]
+
