@@ -23,7 +23,7 @@ class CustomUser(AbstractUser):
         return self.username
     
 
-class conversation(models.Model):
+class Conversation(models.Model):
     conversation_id = models.CharField(primary_key=True, default=uuid.uuid4, editable=False)
     participants_id = models.ForeignKey(CustomUser,on_delete=models.CASCADE, to_field='user_id',
         related_name='conversations')
@@ -31,7 +31,7 @@ class conversation(models.Model):
 
 
 
-class message (models.Model):
+class Message (models.Model):
     message_id = models.CharField(primary_key=True, default=uuid.uuid4, editable=False )
     sender_id = models.ForeignKey(CustomUser,on_delete=models.CASCADE, to_field="user_id",related_name="messages")
     message_body = models.TextField(null=False, blank=False)
