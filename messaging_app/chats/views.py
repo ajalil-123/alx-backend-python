@@ -1,35 +1,30 @@
-from rest_framework import viewsets, status  # Add status
-from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-from django_filters.rest_framework import DjangoFilterBackend # type: ignore
-from .permissions import IsParticipant, IsMessageSenderOrRecipient, IsAuthenticated
-
+from .permissions import IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['participants_id']
-    permission_classes = [IsAuthenticated, IsParticipant]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  # use status
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        # Return conversations where the user is a participant
+        return self.queryset.filter(participants=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save()  # Optionally: include creator as participant
+
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['sender_id']
-    permission_classes = [IsAuthenticated, IsMessageSenderOrRecipient]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  # use status
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        conversation_id = self.kwargs['conversation_pk']
+        return Message.objects.filter(conversation__id=conversation_id, conversation__participants=self.request.user)
+
+    def perform_create(self, serializer):
+        conversation_id = self.kwargs['conversation_pk']
+        serializer.save(sender=self.request.user, conversation_id=conversation_id)
