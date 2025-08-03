@@ -16,17 +16,35 @@ class IsMessageSenderOrRecipient(permissions.BasePermission):
 
 from rest_framework import permissions
 
+# class IsParticipantOfConversation(permissions.BasePermission):
+#     """
+#     Custom permission to only allow participants of a conversation to access it.
+#     """
+
+#     def has_permission(self, request, view):
+#         # Allow only authenticated users to access the API
+#         return request.user and request.user.is_authenticated
+
+#     def has_object_permission(self, request, view, obj):
+#         # Only participants can access/update/delete messages in a conversation
+#         if request.method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
+#             return request.user in obj.conversation.participants.all()
+#         return False
+    
 class IsParticipantOfConversation(permissions.BasePermission):
     """
     Custom permission to only allow participants of a conversation to access it.
     """
 
     def has_permission(self, request, view):
-        # Allow only authenticated users to access the API
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        # Only participants can access/update/delete messages in a conversation
         if request.method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
-            return request.user in obj.conversation.participants.all()
+            # If the object is a Message, check its related Conversation
+            if hasattr(obj, "conversation"):
+                return request.user in obj.conversation.participants.all()
+            # If the object is a Conversation, check its participants directly
+            elif hasattr(obj, "participants"):
+                return request.user in obj.participants.all()
         return False

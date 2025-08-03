@@ -26,8 +26,9 @@ class ConversationViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(participants=self.request.user)
 
     def perform_create(self, serializer):
-        conversation = serializer.save()
-        conversation.participants.add(self.request.user)
+        conversation = serializer.save()  # Create Conversation WITHOUT participants
+        conversation.participants.add(self.request.user)  # Then add participants
+
 
 
 
@@ -39,15 +40,13 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_class = MessageFilter
 
     def get_queryset(self):
-        conversation_id = self.kwargs['conversation_pk']
-        return Message.objects.filter(
-            conversation__id=conversation_id,
-            conversation__participants=self.request.user
-        )
+        conversation_id = self.kwargs.get("conversation_pk")
+        return Message.objects.filter(conversation__conversation_id=conversation_id)
+
 
     def perform_create(self, serializer):
         conversation_id = self.kwargs['conversation_pk']
-        conversation = Conversation.objects.get(id=conversation_id)
+        conversation = Conversation.objects.get(conversation_id=conversation_id)
 
         if self.request.user not in conversation.participants.all():
             raise APIException(detail="You are not allowed to perform this action.", code=HTTP_403_FORBIDDEN)
