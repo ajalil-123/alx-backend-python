@@ -1,0 +1,202 @@
+{
+  "info": {
+    "name": "Messaging App API",
+    "_postman_id": "d7f87d88-1234-5678-abcd-1234567890ab",
+    "description": "API collection for testing the Messaging App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"user1\",\n    \"password\": \"your_password\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/token/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "token",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/token/refresh/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "token",
+            "refresh",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Conversations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/conversations/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "conversations",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Conversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/conversations/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "conversations",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Messages in Conversation",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/conversations/{{conversation_id}}/messages/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "conversations",
+            "{{conversation_id}}",
+            "messages",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message_body\": \"Hello from Postman!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/conversations/{{conversation_id}}/messages/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "conversations",
+            "{{conversation_id}}",
+            "messages",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "conversation_id",
+      "value": ""
+    }
+  ]
+}

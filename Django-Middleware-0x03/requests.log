@@ -1,0 +1,28 @@
+Watching for file changes with StatReloader
+Forbidden: /api/conversations/
+"GET /api/conversations/ HTTP/1.1" 403 5181
+"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+"GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+"GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+"GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+"GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 304 0
+"GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 304 0
+"GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 304 0
+"GET /static/rest_framework/img/grid.png HTTP/1.1" 304 0
+"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+"GET /static/rest_framework/js/csrf.js HTTP/1.1" 304 0
+"GET /api/ HTTP/1.1" 200 5339
+"GET /api/ HTTP/1.1" 200 5339
+"GET /api/ HTTP/1.1" 200 5339
+Watching for file changes with StatReloader
+"GET /api/ HTTP/1.1" 200 5339
+Forbidden: /api/conversations/
+"GET /api/conversations/ HTTP/1.1" 403 5181
+C:\Users\Abdul\Desktop\backend-course\alx-backend-python\messaging_app\messaging_app\settings.py changed, reloading.
+2025-08-06 07:00:26.543283 - User: abdul - Path: /api/
+2025-08-06 07:00:32.149570 - User: abdul - Path: /api/conversations/
+2025-08-06 07:08:23.980743 - User: abdul - Path: /api/messages/
+2025-08-06 07:08:55.457784 - User: abdul - Path: /api/
+2025-08-06 07:09:12.065510 - User: abdul - Path: /api/
