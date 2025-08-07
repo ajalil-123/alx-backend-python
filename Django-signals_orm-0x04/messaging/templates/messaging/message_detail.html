@@ -1,0 +1,16 @@
+
+<!-- messaging/templates/messaging/message_detail.html -->
+
+<h2>Message</h2>
+<p><strong>From:</strong> {{ message.sender }}</p>
+<p><strong>To:</strong> {{ message.receiver }}</p>
+<p><strong>Content:</strong> {{ message.content }}</p>
+
+{% if message.edited %}
+    <h3>Edit History</h3>
+    <ul>
+        {% for edit in history %}
+            <li>{{ edit.edited_at }} - {{ edit.old_content }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
