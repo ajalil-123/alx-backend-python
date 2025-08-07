@@ -13,7 +13,7 @@ def all_messages(request):
     return HttpResponse("<br>".join([f"{m.sender} -> {m.receiver}: {m.content}" for m in messages]))
 
 
-# messaging/views.py
+
 
 from django.shortcuts import render, get_object_or_404
 from .models import Message
@@ -39,17 +39,26 @@ def delete_user(request):
         return redirect('home')  # redirect to homepage or login page
     
 
-# messaging/views.py
-
 from django.shortcuts import render
 from .models import Message
 
+
 def get_user_conversations(request):
-    user = request.user
+    if not request.user.is_authenticated:
+        # Redirect or handle anonymous user
+        return render(request, 'messaging/threaded_conversations.html', {'threads': []})
 
-    # Get only parent (top-level) messages
+    # Optimize by selecting related foreign keys and prefetching replies
     messages = Message.objects.filter(
-        receiver=user, parent_message__isnull=True
-    ).select_related('sender', 'receiver').prefetch_related('replies__sender', 'replies__receiver')
+        sender=request.user,  
+        parent_message__isnull=True  # Only top-level threads
+    ).select_related(
+        'receiver'  # Avoid extra queries when accessing receiver
+    ).prefetch_related(
+        'replies__sender',  # Avoid extra queries when accessing replies and their senders
+        'replies__receiver'
+    ).order_by('-timestamp')
 
-    return render(request, 'messaging/threaded_conversations.html', {'messages': messages})
+    return render(request, 'messaging/threaded_conversations.html', {
+        'threads': messages
+    })
