@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('messages/', views.all_messages, name='all_messages'),
     path('delete-account/', views.delete_user, name='delete_user'),
-     path('threads/', views.get_user_conversations, name='threaded_conversations'),
+    path('threads/', views.get_user_conversations, name='threaded_conversations'),
+    path('inbox/', views.inbox_unread_messages, name='inbox_unread'),
 ]

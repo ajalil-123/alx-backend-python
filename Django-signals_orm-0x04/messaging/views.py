@@ -62,3 +62,15 @@ def get_user_conversations(request):
     return render(request, 'messaging/threaded_conversations.html', {
         'threads': messages
     })
+
+
+def inbox_unread_messages(request):
+    if not request.user.is_authenticated:
+        return render(request, 'messaging/inbox.html', {'messages': []})
+
+    # Use custom manager
+    unread_messages = Message.unread.for_user(request.user)
+
+    return render(request, 'messaging/inbox.html', {
+        'messages': unread_messages
+    })
