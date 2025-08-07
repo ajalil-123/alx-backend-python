@@ -72,7 +72,9 @@ def inbox_unread_messages(request):
         return render(request, 'messaging/inbox.html', {'messages': []})
 
     # Using custom manager with optimized query
-    unread_messages = Message.unread.unread_for_user(request.user)
+    unread_messages = Message.unread.unread_for_user(request.user).only(
+        'id', 'sender', 'receiver', 'timestamp', 'content'
+    )
 
     return render(request, 'messaging/inbox.html', {
         'messages': unread_messages
