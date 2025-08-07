@@ -80,3 +80,14 @@ def inbox_unread_messages(request):
         'messages': unread_messages
     })
 
+
+# chats/views.py
+
+from django.views.decorators.cache import cache_page
+from django.shortcuts import render
+from .models import Message
+
+@cache_page(60)
+def inbox(request):
+    messages = Message.objects.filter(recipient=request.user)
+    return render(request, 'messaging/inbox.html', {'messages': messages})
