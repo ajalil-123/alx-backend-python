@@ -35,5 +35,15 @@ from .models import Message, MessageHistory, Notification
 
 @receiver(post_delete, sender=User)
 def cleanup_user_data(sender, instance, **kwargs):
-    # Messages and related histories already deleted by on_delete=CASCADE
-    print(f"User {instance.username} deleted — all related data removed.")
+    # Explicitly delete messages where the user was sender or receiver
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+
+    # Delete message histories related to the user's messages
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
+
+    # Delete notifications related to the user
+    Notification.objects.filter(user=instance).delete()
+
+    print(f"Cleaned up messages, histories, and notifications for user: {instance.username}")
