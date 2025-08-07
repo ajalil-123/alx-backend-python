@@ -1,0 +1,9 @@
+
+<!-- messaging/templates/messaging/thread_replies.html -->
+
+{% for reply in replies %}
+    <div style="margin-left: 20px; margin-top: 5px;">
+        <strong>{{ reply.sender }}</strong>: {{ reply.content }} ({{ reply.timestamp }})
+        {% include "messaging/thread_replies.html" with replies=reply.replies.all %}
+    </div>
+{% endfor %}

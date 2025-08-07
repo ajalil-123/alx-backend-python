@@ -1,0 +1,16 @@
+
+<!-- messaging/templates/messaging/threaded_conversations.html -->
+
+{% extends 'messaging/base.html' %}
+
+{% block content %}
+<h2>Threaded Conversations</h2>
+
+{% for msg in messages %}
+    <div style="margin-bottom: 20px;">
+        <strong>{{ msg.sender }}</strong>: {{ msg.content }} ({{ msg.timestamp }})
+        {% include "messaging/thread_replies.html" with replies=msg.replies.all %}
+    </div>
+{% endfor %}
+
+{% endblock %}

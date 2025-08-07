@@ -37,3 +37,19 @@ def delete_user(request):
         user = request.user
         user.delete()
         return redirect('home')  # redirect to homepage or login page
+    
+
+# messaging/views.py
+
+from django.shortcuts import render
+from .models import Message
+
+def get_user_conversations(request):
+    user = request.user
+
+    # Get only parent (top-level) messages
+    messages = Message.objects.filter(
+        receiver=user, parent_message__isnull=True
+    ).select_related('sender', 'receiver').prefetch_related('replies__sender', 'replies__receiver')
+
+    return render(request, 'messaging/threaded_conversations.html', {'messages': messages})
