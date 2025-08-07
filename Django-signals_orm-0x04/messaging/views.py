@@ -64,13 +64,17 @@ def get_user_conversations(request):
     })
 
 
+from django.shortcuts import render
+from .models import Message
+
 def inbox_unread_messages(request):
     if not request.user.is_authenticated:
         return render(request, 'messaging/inbox.html', {'messages': []})
 
-    # Use custom manager
-    unread_messages = Message.unread.for_user(request.user)
+    # Using custom manager with optimized query
+    unread_messages = Message.unread.unread_for_user(request.user)
 
     return render(request, 'messaging/inbox.html', {
         'messages': unread_messages
     })
+
