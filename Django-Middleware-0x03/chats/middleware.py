@@ -94,7 +94,7 @@ class RolepermissionMiddleware:
             user_role = getattr(user, 'role', None)
 
             # Deny access if user is not admin or moderator
-            if user_role not in ['admin', 'moderator']:
+            if user_role not in ['admin', 'host']:
                 return HttpResponseForbidden("403 Forbidden: You do not have permission to access this resource.")
         
         # Allow request to continue

@@ -1,7 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from messaging_app import settings
+from chats import settings
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
