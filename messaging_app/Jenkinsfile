@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        // Use ShiningPanda for Python environment
+        PATH = "$WORKSPACE/venv/bin:$PATH"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git credentialsId: '<your-credential-id>', url: 'https://github.com/<your-username>/<your-repo>.git'
+            }
+        }
+
+        stage('Setup Python Environment') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    source venv/bin/activate
+                    pytest --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Generate Test Report') {
+            steps {
+                junit 'test-results.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution finished.'
+        }
+    }
+}
