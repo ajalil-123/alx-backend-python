@@ -25,13 +25,11 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                sh '''
-                    source venv/bin/activate
-                    pytest --junitxml=test-results.xml
-                '''
-            }
-        }
+    steps {
+        sh 'pytest --junitxml=report.xml --html=report.html'
+    }
+}
+
 
         stage('Generate Test Report') {
             steps {
@@ -41,8 +39,13 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Pipeline execution finished.'
-        }
+    always {
+        publishHTML([
+            reportDir: '.', 
+            reportFiles: 'report.html', 
+            reportName: 'Pytest Report'
+        ])
     }
+}
+
 }
