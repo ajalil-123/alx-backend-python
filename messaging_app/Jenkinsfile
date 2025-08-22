@@ -2,50 +2,63 @@ pipeline {
     agent any
 
     environment {
-        // Use ShiningPanda for Python environment
-        PATH = "$WORKSPACE/venv/bin:$PATH"
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
+        DOCKER_IMAGE = "your-dockerhub-username/messaging_app"
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                git credentialsId: '<your-credential-id>', url: 'https://github.com/<your-username>/<your-repo>.git'
+                git branch: 'main', url: 'https://github.com/your-username/messaging_app.git'
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Install Dependencies') {
             steps {
                 sh '''
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 '''
             }
         }
 
         stage('Run Tests') {
-    steps {
-        sh 'pytest --junitxml=report.xml --html=report.html'
-    }
-}
-
-
-        stage('Generate Test Report') {
             steps {
-                junit 'test-results.xml'
+                sh '''
+                source venv/bin/activate
+                pytest --maxfail=1 --disable-warnings -q --junitxml=report.xml
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    sh """
+                    echo "${DOCKERHUB_CREDENTIALS_PSW}" | docker login -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
+                    docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest
+                    docker push ${DOCKER_IMAGE}:latest
+                    """
+                }
             }
         }
     }
 
     post {
-    always {
-        publishHTML([
-            reportDir: '.', 
-            reportFiles: 'report.html', 
-            reportName: 'Pytest Report'
-        ])
+        always {
+            junit '**/report.xml'
+            echo "Pipeline completed."
+        }
     }
-}
-
 }
