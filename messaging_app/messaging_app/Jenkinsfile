@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/messaging_app.git'
+                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/your-username/messaging_app.git'
             }
         }
 
@@ -18,8 +18,8 @@ pipeline {
                 sh '''
                 python3 -m venv venv
                 source venv/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
+                pip3 install --upgrade pip
+                pip3 install -r messaging_app/requirements.txt
                 '''
             }
         }
