@@ -1,25 +1,50 @@
 
-# Base image
-FROM python:3.10
+# # Base image
+# FROM python:3.10
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# # Set environment variables
+# ENV PYTHONDONTWRITEBYTECODE 1
+# ENV PYTHONUNBUFFERED 1
 
-# Set working directory inside container
+# # Set working directory inside container
+# WORKDIR /app
+
+# # Install dependencies
+# COPY requirements.txt /app/
+# RUN pip install --no-cache-dir -r requirements.txt
+
+# # Copy the project files into the container
+# COPY . /app/
+
+# # Expose Django default port
+# EXPOSE 8000
+
+# # Start the Django server
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# # -p
+
+
+# Use official Python image
+FROM python:3.10-slim
+
+# Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt /app/
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY messaging_app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the project files into the container
-COPY . /app/
+# Copy entire project
+COPY . .
 
-# Expose Django default port
+# Expose port
 EXPOSE 8000
 
-# Start the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
-# -p
+# Run migrations and start server
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
