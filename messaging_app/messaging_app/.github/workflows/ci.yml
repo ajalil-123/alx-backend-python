@@ -2,11 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -16,67 +14,84 @@ jobs:
       db:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: messaging_db
           MYSQL_USER: messaging_user
-          MYSQL_PASSWORD: messaging_password
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 --password=root"
+          --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
 
-    env:
-      MYSQL_DATABASE: messaging_db
-      MYSQL_USER: messaging_user
-      MYSQL_PASSWORD: messaging_password
-      MYSQL_HOST: db
-      MYSQL_PORT: 3306
-      SECRET_KEY: github-actions-secret-key
-      DEBUG: "1"
-
     steps:
-      # Step 1 — Checkout Code
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # Step 1 — Checkout the repository
+      - uses: actions/checkout@v3
 
       # Step 2 — Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: 3.10
 
-      # Step 3 — Install Dependencies
+      # Step 3 — Install dependencies (including flake8 and coverage)
       - name: Install dependencies
         run: |
           python -m venv venv
           source venv/bin/activate
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r messaging_app/requirements.txt
+          pip install flake8 coverage
 
-      # Step 4 — Wait for MySQL
+      # Step 4 — Wait for MySQL to be ready
       - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL to start..."
-          for i in {1..30}; do
-            if mysqladmin ping -h db --password=root --silent; then
-              echo "MySQL is ready!"
-              break
-            fi
-            echo "Waiting..."
-            sleep 2
+          until mysqladmin ping -h"db" --silent; do
+            echo "Waiting for database connection..."
+            sleep 5
           done
 
-      # Step 5 — Run Migrations
-      - name: Run migrations
+      # Step 5 — Run flake8 linting (fails if issues are found)
+      - name: Run flake8 linting
         run: |
           source venv/bin/activate
-          python manage.py migrate --noinput
+          flake8 messaging_app --max-line-length=120
+        continue-on-error: false  # ❌ Fail the build if linting fails
 
-      # Step 6 — Run Tests
-      - name: Run tests
+      # Step 6 — Run database migrations
+      - name: Run migrations
+        env:
+          MYSQL_DATABASE: messaging_db
+          MYSQL_USER: messaging_user
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: db
         run: |
           source venv/bin/activate
-          python manage.py test
+          python manage.py migrate
+
+      # Step 7 — Run tests with coverage
+      - name: Run tests with coverage
+        env:
+          MYSQL_DATABASE: messaging_db
+          MYSQL_USER: messaging_user
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: db
+        run: |
+          source venv/bin/activate
+          coverage run manage.py test
+
+      # Step 8 — Generate coverage report
+      - name: Generate coverage report
+        run: |
+          source venv/bin/activate
+          coverage report
+          coverage html
+
+      # Step 9 — Upload coverage report as an artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: htmlcov
