@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+# Ensure minikube is installed
+if ! command -v minikube &> /dev/null; then
+    echo "Minikube not found. Please install Minikube first."
+    exit 1
+fi
+
+# Start Kubernetes cluster
+echo "Starting Minikube cluster..."
+minikube start --driver=docker
+
+# Verify cluster
+echo "Cluster info:"
+kubectl cluster-info
+
+# List all pods
+echo "Available pods:"
+kubectl get pods -A
