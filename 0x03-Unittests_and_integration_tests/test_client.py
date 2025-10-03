@@ -124,3 +124,4 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                     if repo.get("license", {}).get("key") == "apache-2.0"]
 
         self.assertEqual(result, expected)
+        
