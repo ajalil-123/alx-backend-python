@@ -118,10 +118,5 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def test_public_repos_with_license(self):
         """Test public_repos filters repos by license."""
         client = GithubOrgClient("example")
-
         result = client.public_repos(license="apache-2.0")
-        expected = [repo["name"] for repo in self.repos_payload
-                    if repo.get("license", {}).get("key") == "apache-2.0"]
-
-        self.assertEqual(result, expected)
-        
+        self.assertEqual(result, self.apache2_repos)
