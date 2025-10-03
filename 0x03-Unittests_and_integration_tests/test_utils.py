@@ -117,3 +117,4 @@ class TestMemoize(unittest.TestCase):
         # Assert that the results are correct
         self.assertEqual(result1, 42)
         self.assertEqual(result2, 42)
+        
