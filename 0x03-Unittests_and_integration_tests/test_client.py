@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""Module function that inherits from unittest.TestCase"""
-
-import unittest
-import requests
-from parameterized import parameterized, parameterized_class
-from unittest.mock import patch, Mock, PropertyMock
-from client import GithubOrgClient
-from fixtures import TEST_PAYLOAD
-
-#!/usr/bin/env python3
 """Unittests and Integration tests for GithubOrgClient"""
 
 import unittest
