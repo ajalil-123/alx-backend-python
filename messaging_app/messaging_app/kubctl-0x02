@@ -1,0 +1,23 @@
+#!/bin/bash
+# kubctl-0x02: Blue-Green Deployment Script
+
+echo "Deploying blue version..."
+kubectl apply -f blue_deployment.yaml
+echo "Deploying green version..."
+kubectl apply -f green_deployment.yaml
+echo "Applying service..."
+kubectl apply -f kubeservice.yaml
+
+echo "Waiting 10s for pods to start..."
+sleep 10
+
+echo "Checking blue pods..."
+kubectl get pods -l version=blue
+kubectl logs -l version=blue
+
+echo "Checking green pods..."
+kubectl get pods -l version=green
+kubectl logs -l version=green
+
+echo "Blue-Green deployment applied. Switch service selector manually to green when ready:"
+echo "kubectl patch svc messaging-app-service -p '{\"spec\":{\"selector\":{\"version\":\"green\"}}}'"
