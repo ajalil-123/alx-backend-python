@@ -119,12 +119,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Test public_repos filters repos by license."""
         client = GithubOrgClient("example")
 
-        # Swap repos_payload to apache2_repos for this test
-        self.mock_get.side_effect = lambda url: (
-            Mock(json=lambda: self.org_payload)
-            if "orgs" in url and "repos" not in url
-            else Mock(json=lambda: self.apache2_repos)
-        )
-
         result = client.public_repos(license="apache-2.0")
-        self.assertEqual(result, self.apache2_repos)
+        expected = [repo["name"] for repo in self.repos_payload
+                    if repo.get("license", {}).get("key") == "apache-2.0"]
+
+        self.assertEqual(result, expected)
